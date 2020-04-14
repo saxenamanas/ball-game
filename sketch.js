@@ -8,8 +8,15 @@ let ballY;
 let speedX;
 let speedY;
 let center;
+let video;
+
+let classifier;
+
 function setup() {
   createCanvas(500, 600);
+  video = createCapture(VIDEO);
+  video.hide();
+  classifyVideo();
   batX = width/2;
   batY = height-20;
   ballX = batX;
@@ -18,6 +25,23 @@ function setup() {
   speedY = 5;
 }
 
+function preload(){
+  print('exec');
+  classifier = ml5.imageClassifier('https://teachablemachine.withgoogle.com/models/kAjr2zEIk/' + 'model.json');
+}
+
+function classifyVideo(){
+  classifier.classify(video,gotResults);
+}
+
+function gotResults(){
+  if(error){
+
+  }else{
+    print(results[0].label);
+    classifyVideo();
+  }
+}
 
 function ballMove(){
     ballY += speedY;
@@ -35,7 +59,7 @@ function ballMove(){
 }
 
 function collide(){
-    if((ballX-10)>=batX && (ballX+10)<=(batX+100) && (ballY+20)>=batY){
+    if((ballX)>=batX && (ballX)<=(batX+100) && (ballY+20)>=batY){
         speedY = speedY*-1;
         speedX = speedX + 0.05* -(ballX-center);
         print(speedX);
